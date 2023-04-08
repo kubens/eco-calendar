@@ -1,0 +1,26 @@
+{
+  "name": "calendar-worker",
+  "version": "0.1.0",
+  "author": "kubens.com",
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish",
+    "test": "vitest",
+    "validate": "npm-run-all --parallel \"validate:*\"",
+    "validate:eslint": "eslint --ext .ts \"./src/\" --ext .ts \"./tests/\"",
+    "validate:prettier": "prettier --check ./src/ ./tests/",
+    "validate:typecheck": "tsc",
+    "format": "prettier --write ./src/ ./tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubens/eco-calendar.git"
+  },
+  "dependencies": {
+    "@kubens/eco-scheduler-service": "^0.1.0",
+    "itty-router": "^3.0.12"
+  },
+  "devDependencies": {
+    "vitest": "^0.29.8"
+  }
+}
