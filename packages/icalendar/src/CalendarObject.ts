@@ -1,8 +1,8 @@
-import { CalendarProperty, Parameters, PropertyName, PropertyValue } from './CalendarProperty'
+import { CalendarProperty, Parameters, Properties, PropertyValue } from './CalendarProperty'
 
 export type CalendarElement = 'VCALENDAR' | 'VEVENT'
 
-export abstract class CalendarObject {
+export abstract class CalendarObject<T extends Properties = Properties> {
   element: CalendarElement
   components: Record<string, CalendarObject[]>
   properties: Record<string, CalendarProperty[]>
@@ -41,14 +41,18 @@ export abstract class CalendarObject {
   }
 
   addProperty(property: CalendarProperty): void
-  addProperty<Name extends PropertyName>(name: Name, value: PropertyValue<Name>, parameters?: Parameters): void
-  addProperty(data: PropertyName | CalendarProperty, value?: PropertyValue, parameters?: Parameters): void {
+  addProperty<Name extends keyof T & string>(name: Name, value: PropertyValue<T, Name>, parameters?: Parameters): void
+  addProperty<Name extends keyof T & string>(
+    nameOrInstance: Name | CalendarProperty,
+    value?: PropertyValue,
+    parameters?: Parameters
+  ): void {
     let property: CalendarProperty
 
-    if (data instanceof CalendarProperty) {
-      property = data
+    if (nameOrInstance instanceof CalendarProperty) {
+      property = nameOrInstance
     } else if (value) {
-      property = new CalendarProperty(data, value, parameters)
+      property = new CalendarProperty(nameOrInstance, value, parameters)
     } else {
       return
     }
@@ -57,7 +61,23 @@ export abstract class CalendarObject {
     this.properties[property.name].push(property)
   }
 
-  removeProperty(name: PropertyName): void {
+  setProperty(property: CalendarProperty): void
+  setProperty<Name extends keyof T & string>(name: Name, value: PropertyValue<T, Name>, parameters?: Parameters): void
+  setProperty<Name extends keyof T & string>(
+    nameOrInstance: Name | CalendarProperty,
+    value?: PropertyValue<T, Name>,
+    parameters?: Parameters
+  ): void {
+    if (nameOrInstance instanceof CalendarProperty) {
+      this.removeProperty(nameOrInstance.name)
+      this.addProperty(nameOrInstance)
+    } else {
+      this.removeProperty(nameOrInstance)
+      this.addProperty(nameOrInstance, value as PropertyValue<T, Name>, parameters)
+    }
+  }
+
+  removeProperty<Name extends keyof T & string>(name: Name): void {
     delete this.properties[name]
   }
 

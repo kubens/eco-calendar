@@ -3,34 +3,16 @@ import { Duration } from './Duration'
 
 const MAX_LINE = 75
 
-export const PROPERTIES = {
-  // Calendar properties
-  CALSCALE: String,
-  METHOD: String,
-  PRODID: String,
-  VERSION: String,
-  // Descriptive component properties
-  CATEGORIES: Array<string>,
-  SUMMARY: String,
-  PRIORITY: Number,
-  // Date and Time component properties
-  DTSTART: DateTime,
-  DURATION: Duration,
-  // Relationship component properties
-  UID: String,
-  // Change Management component properties
-  DTSTAMP: DateTime,
-  // Custom component properties
-  'X-PUBLISHED-TTL': Duration,
-  'X-WR-CALNAME': String
-}
-
 export type Parameters = Record<string, string>
-export type PropertyName = keyof typeof PROPERTIES
-export type PropertyValue<T extends PropertyName = PropertyName> = InstanceType<(typeof PROPERTIES)[T]>
+export type Properties = Record<string, string | string[] | boolean | number | DateTime | Duration>
+export type PropertyValue<S extends Properties = Properties, T extends keyof S = keyof S> = S[T]
 
-export class CalendarProperty<Value extends PropertyValue = PropertyValue> {
-  name: PropertyName
+export class CalendarProperty<
+  T extends Properties = Properties,
+  Name extends keyof T & string = keyof T & string,
+  Value extends PropertyValue<T, Name> = PropertyValue<T, Name>
+> {
+  name: Name
   value: Value
   parameters: Parameters
 
@@ -42,7 +24,7 @@ export class CalendarProperty<Value extends PropertyValue = PropertyValue> {
     return this.formatText(this.value.toString())
   }
 
-  constructor(name: PropertyName, value: Value, parameters?: Parameters) {
+  constructor(name: Name, value: Value, parameters?: Parameters) {
     this.name = name
     this.value = value
     this.parameters = parameters ?? {}
@@ -58,7 +40,7 @@ export class CalendarProperty<Value extends PropertyValue = PropertyValue> {
 
   format(): string[] {
     const params = []
-    let key = this.name
+    let key = this.name.toString()
 
     for (const name in this.parameters) {
       params.push(`${name}=${this.parameters[name]}`)
