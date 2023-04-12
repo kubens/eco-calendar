@@ -1,22 +1,23 @@
-import { CalendarProperty, CalendarPropertyValue, Parameters, PropertyValue } from './CalendarProperty'
+import { CalendarProperty } from './CalendarProperty'
 
 export type ObjectElement = 'VCALENDAR' | 'VEVENT'
 
-export type ObjectSchema<Properties extends Record<string, CalendarPropertyValue>> = {
-  [P in keyof Properties]: { required: boolean; once?: boolean }
+export type ObjectSchema<Properties extends Record<string, CalendarProperty.Value>> = {
+  [P in keyof Properties & string]: { required: boolean; once?: boolean }
 }
 
 export abstract class CalendarObject<
-  Properties extends Record<string, CalendarPropertyValue> = Record<string, CalendarPropertyValue>,
+  Properties extends Record<string, CalendarProperty.Value> = Record<string, CalendarProperty.Value>,
   Component extends CalendarObject = never,
-  Schema extends ObjectSchema<Properties> = ObjectSchema<Properties>
+  PropertyName extends keyof Properties & string = keyof Properties & string,
+  PropertyValue extends CalendarProperty.Value = CalendarProperty.ExtractValue<Properties, PropertyName>
 > {
-  schema: Schema
+  schema: ObjectSchema<Properties>
   element: ObjectElement
   components: Record<string, Component[]>
-  properties: Record<string, CalendarProperty<Properties>[]>
+  properties: Record<string, CalendarProperty<PropertyName, PropertyValue>[]>
 
-  constructor(element: ObjectElement, schema: Schema) {
+  constructor(element: ObjectElement, schema: ObjectSchema<Properties>) {
     this.element = element
     this.schema = schema
     this.components = {}
@@ -50,38 +51,32 @@ export abstract class CalendarObject<
     }
   }
 
-  addProperty<Name extends keyof Properties & string>(
-    name: Name,
-    value: PropertyValue<Properties, Name>,
-    parameters?: Parameters
-  ): void {
+  addProperty(name: PropertyName, value: PropertyValue, parameters?: CalendarProperty.Parameters): void {
     const property = new CalendarProperty(name, value, parameters)
 
     this.properties[property.name] = this.properties[property.name] ?? []
     this.properties[property.name].push(property)
   }
 
-  setProperty<Name extends keyof Properties & string>(
-    name: Name,
-    value: PropertyValue<Properties, Name>,
-    parameters?: Parameters
-  ): void {
+  setProperty(name: PropertyName, value: PropertyValue, parameters?: CalendarProperty.Parameters): void {
     this.removeProperty(name)
     this.addProperty(name, value, parameters)
   }
 
-  getProperties<Name extends keyof Properties & string>(name: Name): CalendarProperty<Properties>[] | undefined {
-    return this.properties[name] ?? undefined
+  getProperties(name: PropertyName): CalendarProperty<PropertyName, PropertyValue>[] | undefined {
+    if (name in this.properties) {
+      return this.properties[name]
+    }
   }
 
-  removeProperty<Name extends keyof Properties & string>(name: Name): void {
+  removeProperty(name: PropertyName): void {
     delete this.properties[name]
   }
 
   validate(): void {
     for (const name in this.schema) {
       const { required, once } = this.schema[name]
-      const properties = this.getProperties(name)
+      const properties = this.getProperties(name as unknown as PropertyName)
 
       // Check property exists.
       if (required && (!properties || properties.length === 0)) {

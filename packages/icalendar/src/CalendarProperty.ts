@@ -3,28 +3,27 @@ import { Duration } from './Duration'
 
 const MAX_LINE = 75
 
-export type Parameters = Record<string, string>
-export type CalendarPropertyValue = string | string[] | boolean | number | DateTime | Duration
-export type PropertyValue<S extends Record<string, CalendarPropertyValue>, T extends keyof S = keyof S> = S[T]
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export declare namespace CalendarProperty {
+  export type Parameters = Record<string, string>
+  export type Value = string | string[] | boolean | number | DateTime | Duration
+  export type ExtractValue<T extends Record<string, Value>, I extends keyof T = keyof T> = T[I]
+}
 
-export class CalendarProperty<
-  Properties extends Record<string, CalendarPropertyValue>,
-  Name extends keyof Properties & string = keyof Properties & string,
-  Value extends PropertyValue<Properties, Name> = PropertyValue<Properties, Name>
-> {
+export class CalendarProperty<Name extends string, Value extends CalendarProperty.Value> {
   name: Name
   value: Value
-  parameters: Parameters
+  parameters: CalendarProperty.Parameters
 
   get formattedValue(): string {
     if (Array.isArray(this.value)) {
       return this.value.map(this.formatText).join(',')
     }
-    // prettier-ignore
+
     return this.formatText(this.value.toString())
   }
 
-  constructor(name: Name, value: Value, parameters?: Parameters) {
+  constructor(name: Name, value: Value, parameters?: CalendarProperty.Parameters) {
     this.name = name
     this.value = value
     this.parameters = parameters ?? {}

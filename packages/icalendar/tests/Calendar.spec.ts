@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { Calendar } from '../src/Calendar'
+import { ICalendar } from '../src/ICalendar'
 
 describe('Calendar Object', () => {
   it('should create an valid empty Calendar object', () => {
-    const given = new Calendar()
+    const given = new ICalendar()
 
     expect(given.format()).toEqual([
       'BEGIN:VCALENDAR',
