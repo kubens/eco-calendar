@@ -6,7 +6,6 @@ describe('Calendar Object', () => {
     const given = new Calendar()
 
     expect(given.format()).toEqual([
-      // prettier-ignore
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       `PRODID://kubens.com//icalendar`,

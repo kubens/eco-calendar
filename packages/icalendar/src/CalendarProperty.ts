@@ -4,13 +4,13 @@ import { Duration } from './Duration'
 const MAX_LINE = 75
 
 export type Parameters = Record<string, string>
-export type Properties = Record<string, string | string[] | boolean | number | DateTime | Duration>
-export type PropertyValue<S extends Properties = Properties, T extends keyof S = keyof S> = S[T]
+export type CalendarPropertyValue = string | string[] | boolean | number | DateTime | Duration
+export type PropertyValue<S extends Record<string, CalendarPropertyValue>, T extends keyof S = keyof S> = S[T]
 
 export class CalendarProperty<
-  T extends Properties = Properties,
-  Name extends keyof T & string = keyof T & string,
-  Value extends PropertyValue<T, Name> = PropertyValue<T, Name>
+  Properties extends Record<string, CalendarPropertyValue>,
+  Name extends keyof Properties & string = keyof Properties & string,
+  Value extends PropertyValue<Properties, Name> = PropertyValue<Properties, Name>
 > {
   name: Name
   value: Value
