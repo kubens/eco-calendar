@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CalendarObject } from '../src/CalendarObject'
 
 describe('CalendarObject', () => {
-  class TestObject extends CalendarObject {}
+  class TestObject extends CalendarObject<Record<string, string>> {}
 
   it('should initialize with empty properties when created', () => {
     const object = new TestObject('VCALENDAR', { TEST: { required: false } })

@@ -3,20 +3,20 @@ import { Duration } from './Duration'
 
 const MAX_LINE = 75
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export declare namespace CalendarProperty {
-  export type Parameters = Record<string, string>
-  export type Value = string | string[] | boolean | number | DateTime | Duration
-  export type ExtractValue<T extends Record<string, Value>, I extends keyof T = keyof T> = T[I]
-}
+
+export type PropertyParameters = Record<string, string>
+
+export type PropertyValue = string | string[] | boolean | number | DateTime | Duration
+
+export type ExtractPropertyValue<T extends Record<string, PropertyValue>, I extends keyof T = keyof T> = T[I]
 
 export class CalendarProperty<
   Name extends string = string,
-  Value extends CalendarProperty.Value = CalendarProperty.Value
+  Value extends PropertyValue = PropertyValue
 > {
   name: Name
   value: Value
-  parameters: CalendarProperty.Parameters
+  parameters: PropertyParameters
 
   get formattedValue(): string {
     if (Array.isArray(this.value)) {
@@ -26,7 +26,7 @@ export class CalendarProperty<
     return this.formatText(this.value.toString())
   }
 
-  constructor(name: Name, value: Value, parameters?: CalendarProperty.Parameters) {
+  constructor(name: Name, value: Value, parameters?: PropertyParameters) {
     this.name = name
     this.value = value
     this.parameters = parameters ?? {}

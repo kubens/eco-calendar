@@ -1,4 +1,4 @@
-import { CalendarObject } from './CalendarObject'
+import { CalendarObject, ObjectSchema } from './CalendarObject'
 import { Duration } from './Duration'
 import { DEFAULT_PRODUCT_ID, formatProductIdentifier } from './ProductIdentifier'
 
@@ -13,7 +13,7 @@ type ICalendarProperties = {
   'X-PUBLISHED-TTL': Duration
 }
 
-const schema: CalendarObject.Schema<keyof ICalendarProperties> = {
+const schema: ObjectSchema<ICalendarProperties> = {
   CALSCALE: { required: false, once: true },
   METHOD: { required: false, once: true },
   PRODID: { required: true, once: true },

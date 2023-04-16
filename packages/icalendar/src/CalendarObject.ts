@@ -1,44 +1,45 @@
-import { CalendarProperty } from './CalendarProperty'
+import { CalendarProperty, ExtractPropertyValue, PropertyParameters, PropertyValue } from './CalendarProperty'
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export declare namespace CalendarObject {
-  export type Element = 'VCALENDAR' | 'VEVENT'
+export type CalendarElement = 'VCALENDAR' | 'VEVENT'
 
-  export type Schema<PropertyName extends string> = {
-    [P in PropertyName]: {
-      required: boolean | ((names: PropertyName[]) => boolean)
-      excludedBy?: PropertyName[] | (() => string[] | undefined)
-      once?: boolean
-    }
+export type ObjectSchema<
+  Properties extends Record<string, PropertyValue>,
+  Name extends keyof Properties & string = keyof Properties & string
+> = {
+  [P in Name]: {
+    required: boolean | ((names: Name[]) => boolean)
+    excludedBy?: Name[] | (() => string[] | undefined)
+    once?: boolean
   }
 }
 
 export abstract class CalendarObject<
-  Properties extends Record<string, CalendarProperty.Value> = Record<string, CalendarProperty.Value>,
-  ChildObject extends CalendarObject = never,
+  Properties extends Record<string, PropertyValue>,
+  Child extends CalendarObject<Record<any, PropertyValue>> = never,
   PropertyName extends keyof Properties & string = keyof Properties & string,
-  PropertyValue extends CalendarProperty.Value = CalendarProperty.ExtractValue<Properties, PropertyName>
+  Value extends PropertyValue = ExtractPropertyValue<Properties, PropertyName>,
+  Schema extends ObjectSchema<Properties> = ObjectSchema<Properties>
 > {
-  schema: CalendarObject.Schema<PropertyName>
-  element: CalendarObject.Element
-  children: Record<string, ChildObject[]>
-  properties: Record<string, CalendarProperty<PropertyName, PropertyValue>[]>
+  schema: Schema
+  element: CalendarElement
+  children: Record<string, Child[]>
+  properties: Record<string, CalendarProperty<PropertyName, Value>[]>
 
-  constructor(element: CalendarObject.Element, schema: CalendarObject.Schema<PropertyName>) {
+  constructor(element: CalendarElement, schema: Schema) {
     this.element = element
     this.schema = schema
     this.children = {}
     this.properties = {}
   }
 
-  addChild(object: ChildObject): void {
+  addChild(object: Child): void {
     this.children[object.element] = this.children[object.element] || []
     this.children[object.element].push(object)
   }
 
-  getChildren(element?: ChildObject['element']): ChildObject[] {
+  getChildren(element?: Child['element']): Child[] {
     if (!element) {
-      let output: ChildObject[] = []
+      let output: Child[] = []
 
       for (const element in this.children) {
         output = output.concat(this.children[element])
@@ -50,27 +51,27 @@ export abstract class CalendarObject<
     return this.children[element]
   }
 
-  removeChildren(object?: CalendarObject.Element) {
-    if (!object) {
+  removeChildren(element?: CalendarElement) {
+    if (!element) {
       this.children = {}
     } else {
-      delete this.children[object]
+      delete this.children[element]
     }
   }
 
-  addProperty(name: PropertyName, value: PropertyValue, parameters?: CalendarProperty.Parameters): void {
+  addProperty(name: PropertyName, value: Value, parameters?: PropertyParameters): void {
     const property = new CalendarProperty(name, value, parameters)
 
     this.properties[property.name] = this.properties[property.name] ?? []
     this.properties[property.name].push(property)
   }
 
-  setProperty(name: PropertyName, value: PropertyValue, parameters?: CalendarProperty.Parameters): void {
+  setProperty(name: PropertyName, value: Value, parameters?: PropertyParameters): void {
     this.removeProperty(name)
     this.addProperty(name, value, parameters)
   }
 
-  getProperties(name: PropertyName): CalendarProperty<PropertyName, PropertyValue>[] | undefined {
+  getProperties(name: PropertyName): CalendarProperty<PropertyName, Value>[] | undefined {
     if (name in this.properties) {
       return this.properties[name]
     }
@@ -119,6 +120,12 @@ export abstract class CalendarObject<
     for (const name in this.properties) {
       this.properties[name].forEach((prop) => {
         lines.push(...prop.format())
+      })
+    }
+
+    for (const child in this.children) {
+      this.children[child].forEach((object) => {
+        lines.push(...object.format())
       })
     }
 
