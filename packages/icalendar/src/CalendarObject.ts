@@ -1,53 +1,60 @@
 import { CalendarProperty } from './CalendarProperty'
 
-export type ObjectElement = 'VCALENDAR' | 'VEVENT'
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export declare namespace CalendarObject {
+  export type Element = 'VCALENDAR' | 'VEVENT'
 
-export type ObjectSchema<Properties extends Record<string, CalendarProperty.Value>> = {
-  [P in keyof Properties & string]: { required: boolean; once?: boolean }
+  export type Schema<PropertyName extends string> = {
+    [P in PropertyName]: {
+      required: boolean | ((names: PropertyName[]) => boolean)
+      excludedBy?: PropertyName[] | (() => string[] | undefined)
+      once?: boolean
+    }
+  }
 }
 
 export abstract class CalendarObject<
   Properties extends Record<string, CalendarProperty.Value> = Record<string, CalendarProperty.Value>,
-  Component extends CalendarObject = never,
+  ChildObject extends CalendarObject = never,
   PropertyName extends keyof Properties & string = keyof Properties & string,
   PropertyValue extends CalendarProperty.Value = CalendarProperty.ExtractValue<Properties, PropertyName>
 > {
-  schema: ObjectSchema<Properties>
-  element: ObjectElement
-  components: Record<string, Component[]>
+  schema: CalendarObject.Schema<PropertyName>
+  element: CalendarObject.Element
+  children: Record<string, ChildObject[]>
   properties: Record<string, CalendarProperty<PropertyName, PropertyValue>[]>
 
-  constructor(element: ObjectElement, schema: ObjectSchema<Properties>) {
+  constructor(element: CalendarObject.Element, schema: CalendarObject.Schema<PropertyName>) {
     this.element = element
     this.schema = schema
-    this.components = {}
+    this.children = {}
     this.properties = {}
   }
 
-  addComponent(component: Component): void {
-    this.components[component.element] = this.components[component.element] || []
-    this.components[component.element].push(component)
+  addChild(object: ChildObject): void {
+    this.children[object.element] = this.children[object.element] || []
+    this.children[object.element].push(object)
   }
 
-  getComponents(element?: Component['element']): Component[] {
+  getChildren(element?: ChildObject['element']): ChildObject[] {
     if (!element) {
-      let output: Component[] = []
+      let output: ChildObject[] = []
 
-      for (const element in this.components) {
-        output = output.concat(this.components[element])
+      for (const element in this.children) {
+        output = output.concat(this.children[element])
       }
 
       return output
     }
 
-    return this.components[element]
+    return this.children[element]
   }
 
-  removeComponents(element?: ObjectElement) {
-    if (!element) {
-      this.components = {}
+  removeChildren(object?: CalendarObject.Element) {
+    if (!object) {
+      this.children = {}
     } else {
-      delete this.components[element]
+      delete this.children[object]
     }
   }
 
@@ -73,18 +80,34 @@ export abstract class CalendarObject<
     delete this.properties[name]
   }
 
+  /** @throws Will throw an `Error` when `CalendarObject` is invalid. */
   validate(): void {
     for (const name in this.schema) {
-      const { required, once } = this.schema[name]
-      const properties = this.getProperties(name as unknown as PropertyName)
+      const rules = this.schema[name]
 
-      // Check property exists.
-      if (required && (!properties || properties.length === 0)) {
-        throw new Error(`${name} is a required property of ${this.element}`)
+      // Check is current property is not excluded by another property.
+      if (rules.excludedBy) {
+        const excludedBy =
+          typeof rules.excludedBy === 'function'
+            ? rules.excludedBy()
+            : rules.excludedBy.find((excludingName) => excludingName in this.properties)
+
+        if (excludedBy) throw new Error(`${name} property should not occur with ${excludedBy}`)
       }
 
-      if (once && properties && properties.length > 1) {
-        throw new Error(`${name} must not occur more than once property of ${this.element}`)
+      // Check is property should occur once.
+      if (rules.once && this.properties[name]?.length > 1) {
+        throw new Error(`${name} property must not occur more than once of ${this.element}`)
+      }
+
+      // Check is current property is required and not exists in properties.
+      const isRequired =
+        typeof rules.required === 'function'
+          ? rules.required(Object.keys(this.properties) as PropertyName[])
+          : rules.required
+
+      if (isRequired && !(name in this.properties)) {
+        throw new Error(`${name} is a required property of ${this.element}`)
       }
     }
   }

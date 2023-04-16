@@ -10,7 +10,10 @@ export declare namespace CalendarProperty {
   export type ExtractValue<T extends Record<string, Value>, I extends keyof T = keyof T> = T[I]
 }
 
-export class CalendarProperty<Name extends string, Value extends CalendarProperty.Value> {
+export class CalendarProperty<
+  Name extends string = string,
+  Value extends CalendarProperty.Value = CalendarProperty.Value
+> {
   name: Name
   value: Value
   parameters: CalendarProperty.Parameters

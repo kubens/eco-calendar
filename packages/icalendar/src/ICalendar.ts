@@ -8,14 +8,16 @@ type CalendarProperties = {
   VERSION: string
 }
 
+const schema: CalendarObject.Schema<keyof CalendarProperties> = {
+  CALSCALE: { required: false, once: true },
+  METHOD: { required: false, once: true },
+  PRODID: { required: true, once: true },
+  VERSION: { required: true, once: true },
+}
+
 export class ICalendar extends CalendarObject<CalendarProperties> {
   constructor(productId = DEFAULT_PRODUCT_ID) {
-    super('VCALENDAR', {
-      CALSCALE: { required: false, once: true },
-      METHOD: { required: false, once: true },
-      PRODID: { required: true, once: true },
-      VERSION: { required: true, once: false },
-    })
+    super('VCALENDAR', schema)
 
     // Create base properties
     this.addProperty('VERSION', '2.0')
