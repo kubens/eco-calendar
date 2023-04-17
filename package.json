@@ -30,6 +30,7 @@
   },
   "workspaces": [
     "packages/ics-generator",
-    "workers/calendar-worker"
+    "packages/eco-scheduler",
+    "workers/calendar"
   ]
 }
