@@ -29,6 +29,7 @@
     "wrangler": "^2.14.0"
   },
   "workspaces": [
+    "packages/ics-generator",
     "workers/calendar-worker"
   ]
 }

@@ -1,8 +1,11 @@
 {
-  "name": "icalendar",
+  "name": "ics-generator",
   "version": "0.1.0",
   "private": true,
   "main": "dist/index.js",
+  "files": [
+    "./dist/**/*"
+  ],
   "scripts": {
     "prebuild": "rimraf ./dist/*",
     "build": "tsc",

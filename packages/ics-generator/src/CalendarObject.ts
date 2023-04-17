@@ -37,6 +37,10 @@ export abstract class CalendarObject<
     this.children[object.element].push(object)
   }
 
+  addChildren(objects: Child[]): void {
+    objects.forEach(this.addChild)
+  }
+
   getChildren(element?: Child['element']): Child[] {
     if (!element) {
       let output: Child[] = []
@@ -69,6 +73,10 @@ export abstract class CalendarObject<
   setProperty(name: PropertyName, value: Value, parameters?: PropertyParameters): void {
     this.removeProperty(name)
     this.addProperty(name, value, parameters)
+  }
+
+  hasProperty(name: PropertyName): boolean {
+    return name in this.properties
   }
 
   getProperties(name: PropertyName): CalendarProperty<PropertyName, Value>[] | undefined {
