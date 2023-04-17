@@ -8,6 +8,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import { Toucan } from 'toucan-js'
 import { App } from './App'
 import { EcoSchedulerProvider } from './providers/EcoSchedulerProvider'
 
@@ -24,13 +25,24 @@ export interface Env {
   //
   // Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
   // MY_SERVICE: Fetcher;
+  ENVIRONMENT: string
+  SENTRY_DSN: string
 }
 
 export default {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, context: ExecutionContext): Promise<Response> {
+    const toucan = new Toucan({ dsn: env.SENTRY_DSN, context, request, environment: env.ENVIRONMENT })
     const scheduleProvider = new EcoSchedulerProvider()
+    const app = App({ scheduleProvider })
 
-    return App({ scheduleProvider }).handleRequest(request)
+    try {
+      return app.handleRequest(request)
+    } catch (error) {
+      toucan.captureException(error)
+
+      return new Response('Internal Server Error', {
+        status: 500,
+      })
+    }
   },
 }

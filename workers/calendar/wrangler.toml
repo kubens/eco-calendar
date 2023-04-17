@@ -3,6 +3,12 @@ main = "src/index.ts"
 compatibility_date = "2023-04-06"
 workers_dev = true
 
+[vars]
+ENVIRONMENT = "preview"
+
 [env.production]
 name = 'eco-calendar'
 workers_dev = false
+
+[env.production.vars]
+ENVIRONMENT = "production"

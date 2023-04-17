@@ -15,14 +15,7 @@ export function App({ scheduleProvider }: AppProps) {
   router.all('*', NotFoundRoute())
 
   async function handleRequest(request: Request): Promise<Response> {
-    try {
-      return await router.handle(request)
-    } catch (error) {
-      console.error(`Unhandled ${error}`)
-      return new Response('Internal Server Error', {
-        status: 500,
-      })
-    }
+    return await router.handle(request)
   }
 
   return { handleRequest }
