@@ -1,4 +1,4 @@
-import { CONSTRAINTS } from "./Constraints"
+import { CONSTRAINTS } from './Constraints'
 
 export interface ProductIdentifier {
   company: string
@@ -8,7 +8,7 @@ export interface ProductIdentifier {
 
 export const DEFAULT_PRODUCT_ID: ProductIdentifier = {
   company: CONSTRAINTS.company,
-  product: CONSTRAINTS.product
+  product: CONSTRAINTS.product,
 }
 
 export function formatProductIdentifier(productId: ProductIdentifier): string {

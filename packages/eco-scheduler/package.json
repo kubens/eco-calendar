@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "rimraf .dist/*",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

@@ -8,8 +8,8 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-// import { App } from './App'
-// import { EcoSchedulerProvider } from './providers/EcoSchedulerProvider'
+import { App } from './App'
+import { EcoSchedulerProvider } from './providers/EcoSchedulerProvider'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Env {
@@ -27,9 +27,10 @@ export interface Env {
 }
 
 export default {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return new Response('Hello world!', {
-      status: 200,
-    })
+    const scheduleProvider = new EcoSchedulerProvider()
+
+    return App({ scheduleProvider }).handleRequest(request)
   },
 }

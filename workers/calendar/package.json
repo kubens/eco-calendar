@@ -1,6 +1,7 @@
 {
-  "name": "calendar-worker",
+  "name": "calendar",
   "version": "0.1.0",
+  "private": true,
   "author": "kubens.com",
   "scripts": {
     "start": "wrangler dev",
@@ -17,10 +18,12 @@
     "url": "git+https://github.com/kubens/eco-calendar.git"
   },
   "dependencies": {
-    "@kubens/eco-scheduler-service": "^0.1.0",
+    "eco-scheduler": "^1.0.0",
+    "ics-generator": "^0.1.0",
     "itty-router": "^3.0.12"
   },
   "devDependencies": {
-    "vitest": "^0.29.8"
+    "@cloudflare/workers-types": "^4.20230404.0",
+    "wrangler": "^2.15.1"
   }
 }

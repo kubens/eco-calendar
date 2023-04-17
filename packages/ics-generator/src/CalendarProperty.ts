@@ -3,17 +3,13 @@ import { Duration } from './Duration'
 
 const MAX_LINE = 75
 
-
 export type PropertyParameters = Record<string, string>
 
 export type PropertyValue = string | string[] | boolean | number | DateTime | Duration
 
 export type ExtractPropertyValue<T extends Record<string, PropertyValue>, I extends keyof T = keyof T> = T[I]
 
-export class CalendarProperty<
-  Name extends string = string,
-  Value extends PropertyValue = PropertyValue
-> {
+export class CalendarProperty<Name extends string = string, Value extends PropertyValue = PropertyValue> {
   name: Name
   value: Value
   parameters: PropertyParameters

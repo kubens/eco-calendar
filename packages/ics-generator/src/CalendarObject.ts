@@ -38,7 +38,7 @@ export abstract class CalendarObject<
   }
 
   addChildren(objects: Child[]): void {
-    objects.forEach(this.addChild)
+    objects.forEach((child) => this.addChild(child))
   }
 
   getChildren(element?: Child['element']): Child[] {
