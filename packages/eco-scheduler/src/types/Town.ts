@@ -9,6 +9,6 @@ export interface Town {
   schedulePeriodId: number
 }
 
-export interface GetTownsResponse {
+export interface TownData {
   towns: Town[]
 }

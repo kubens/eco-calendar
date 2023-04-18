@@ -4,4 +4,4 @@ export interface Address {
   number: string
 }
 
-export type GetAddressResponse = Address
+export type AddressData = Address

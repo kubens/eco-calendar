@@ -8,6 +8,6 @@ export interface Street {
   townProvince: string
 }
 
-export type GetStreetResponse = {
+export type StreetsData = {
   streets: Street[]
 }

@@ -5,6 +5,6 @@ export interface SchedulePeriod {
   changeDate: string
 }
 
-export interface GetSchedulePeriodsResponse {
+export interface SchedulePeriodsData {
   schedulePeriods: SchedulePeriod[]
 }

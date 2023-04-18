@@ -13,7 +13,7 @@ export interface ScheduleDescription {
   name: string
 }
 
-export interface GetSchedulesResponse {
+export interface SchedulesData {
   schedules: Schedule[]
   scheduleDescription: ScheduleDescription[]
   schedulePeriod: Omit<SchedulePeriod, 'id'>
