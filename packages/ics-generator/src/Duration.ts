@@ -6,6 +6,7 @@ export const SECONDS_A_MONTH = Math.round(SECONDS_A_DAY * 30.471)
 export const SECONDS_A_YEAR = Math.round(SECONDS_A_DAY * 365.26)
 
 export interface DurationAttributes {
+  isNegative: boolean
   years: number
   months: number
   days: number
@@ -17,7 +18,11 @@ export interface DurationAttributes {
 export class Duration implements DurationAttributes {
   static seconds(seconds: number): Duration {
     const duration = new Duration()
-    let value = seconds
+    let value = Math.abs(seconds)
+
+    if (seconds < 0) {
+      duration.isNegative = true
+    }
 
     duration.years = Math.floor(value / SECONDS_A_YEAR)
     value %= SECONDS_A_YEAR
@@ -34,6 +39,7 @@ export class Duration implements DurationAttributes {
     return duration
   }
 
+  isNegative: boolean
   years: number
   months: number
   days: number
@@ -42,6 +48,7 @@ export class Duration implements DurationAttributes {
   seconds: number
 
   constructor(attributes?: Partial<DurationAttributes>) {
+    this.isNegative = attributes?.isNegative ?? false
     this.years = attributes?.years ?? 0
     this.months = attributes?.months ?? 0
     this.days = attributes?.days ?? 0
@@ -51,6 +58,7 @@ export class Duration implements DurationAttributes {
   }
 
   toString(): string {
+    const P = this.isNegative ? '-P' : 'P'
     const Y = this.getNumberUnitFormat(this.years, 'Y')
     const M = this.getNumberUnitFormat(this.months, 'M')
     const D = this.getNumberUnitFormat(this.days, 'D')
@@ -59,8 +67,8 @@ export class Duration implements DurationAttributes {
     const S = this.getNumberUnitFormat(this.seconds, 'S')
     const T = H.format || m.format || S.format ? 'T' : ''
 
-    const result = `P${Y.format}${M.format}${D.format}${T}${H.format}${m.format}${S.format}`
-    return result === 'P' ? 'PT0S' : result
+    const result = `${P}${Y.format}${M.format}${D.format}${T}${H.format}${m.format}${S.format}`
+    return result === 'P' || result === '-P' ? 'PT0S' : result
   }
 
   private getNumberUnitFormat(number: number | undefined, unit: string) {
