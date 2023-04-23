@@ -12,3 +12,4 @@ workers_dev = false
 
 [env.production.vars]
 ENVIRONMENT = "production"
+route = { pattern = "ecocalendar.kubens.com/calendar/*", zone_id = "kubens.com" }

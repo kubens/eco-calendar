@@ -5,10 +5,7 @@
   "author": "kubens.com",
   "license": "MIT",
   "scripts": {
-    "start": "npm start --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
-    "test": "npm test run --workspaces --if-present",
-    "format": "prettier --write ./packages/ ./workers/"
+    "format": "prettier --write ./packages/**/{src,tests} ./workers/**/{src,tests}"
   },
   "repository": {
     "type": "git",

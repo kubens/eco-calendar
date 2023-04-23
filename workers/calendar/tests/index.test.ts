@@ -15,11 +15,18 @@ describe('Worker', () => {
     await worker.stop()
   })
 
-  it('should return Not Found with proper status', async () => {
+  it('should return 404 status for request without empty pathname', async () => {
     const resp = await worker.fetch()
-    const text = await resp.text()
-
     expect(resp.status).toBe(404)
-    expect(text).toMatchInlineSnapshot(`"Not Found"`)
+  })
+
+  it('should return 404 status for request other than GET method', async () => {
+    const resp = await worker.fetch('/', { method: 'post' })
+    expect(resp.status).toBe(404)
+  })
+
+  it('should return 404 status for request without parameters', async () => {
+    const resp = await worker.fetch('/calendar/')
+    expect(resp.status).toBe(404)
   })
 })

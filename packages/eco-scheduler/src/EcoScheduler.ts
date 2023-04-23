@@ -1,4 +1,4 @@
-const BASE_URL = new URL('http://www.ecoharmonogram.pl/api/api.php')
+const BASE_URL = new URL('https://www.ecoharmonogram.pl/api/api.php')
 const BASE_HEADERS: HeadersInit = [['Content-Type', 'application/x-www-form-urlencoded']]
 
 export const EcoScheduler = {
