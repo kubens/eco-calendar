@@ -1,4 +1,4 @@
-import { CalendarObject, ObjectSchema } from './CalendarObject'
+import { CalendarObject } from './CalendarObject'
 import { Duration } from './Duration'
 import { DEFAULT_PRODUCT_ID, formatProductIdentifier } from './ProductIdentifier'
 import { VEvent } from './VEvent'
