@@ -9,7 +9,7 @@ export const EcoScheduler = {
     return new Request(BASE_URL, {
       method: 'POST',
       headers: BASE_HEADERS,
-      body: new URLSearchParams({ action: 'getAddress', x: String(lon), y: String(lat) })
+      body: new URLSearchParams({ action: 'getAddress', x: String(lon), y: String(lat) }),
     })
   },
   /**
@@ -19,7 +19,7 @@ export const EcoScheduler = {
     return new Request(BASE_URL, {
       method: 'POST',
       headers: BASE_HEADERS,
-      body: new URLSearchParams({ action: 'getTowns', townName })
+      body: new URLSearchParams({ action: 'getTowns', townName }),
     })
   },
   /**
@@ -29,7 +29,7 @@ export const EcoScheduler = {
     return new Request(BASE_URL, {
       method: 'POST',
       headers: BASE_HEADERS,
-      body: new URLSearchParams({ action: 'getSchedulePeriods', townId })
+      body: new URLSearchParams({ action: 'getSchedulePeriods', townId }),
     })
   },
   /**
@@ -39,7 +39,7 @@ export const EcoScheduler = {
     return new Request(BASE_URL, {
       method: 'POST',
       headers: BASE_HEADERS,
-      body: new URLSearchParams({ action: 'getStreets', townId, number, schedulePeriodId })
+      body: new URLSearchParams({ action: 'getStreets', townId, number, schedulePeriodId }),
     })
   },
 
@@ -50,7 +50,7 @@ export const EcoScheduler = {
     return new Request(BASE_URL, {
       method: 'POST',
       headers: BASE_HEADERS,
-      body: new URLSearchParams({ action: 'getSchedules', streetId })
+      body: new URLSearchParams({ action: 'getSchedules', streetId }),
     })
   },
 }

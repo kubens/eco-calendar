@@ -5,7 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "rimraf .dist/*",
-    "build": "tsc"
+    "build": "tsc",
+    "validate": "npm-run-all --parallel \"validate:*\"",
+    "validate:eslint": "eslint --ext .ts \"./src/\"",
+    "validate:prettier": "prettier --check ./src/",
+    "validate:typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
