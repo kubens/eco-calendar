@@ -7,7 +7,7 @@ describe('DateTime Model', () => {
     const given = DateTime.fromDate(date)
 
     expect(given).toBeInstanceOf(DateTime)
-    expect(given.toString()).toBe('20230406T201535Z')
+    expect(given.toString()).toBe('20230406T181535Z')
   })
 
   it('should return date with time string', () => {
