@@ -1,0 +1,20 @@
+{
+  "name": "ics-generator",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "files": [
+    "./dist/**/*"
+  ],
+  "scripts": {
+    "prebuild": "rimraf ./dist/*",
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubens/eco-calendar.git"
+  },
+  "author": "kubens.com",
+  "license": "MIT"
+}

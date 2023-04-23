@@ -1,0 +1,16 @@
+{
+  "name": "eco-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "rimraf .dist/*",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubens/eco-calendar.git"
+  },
+  "author": "kubens.com",
+  "license": "MIT"
+}
