@@ -1,5 +1,5 @@
 import { SchedulesData } from 'eco-scheduler'
-import { DateTime, Duration, ICalendar, VAlarm, VEvent } from 'ics-generator'
+import { DateTime, Duration, ICalendar, VAlarm } from 'ics-generator'
 import { constrains } from '../constrains'
 import capitalizeFirstChart from './capitalizeFirstChar'
 
