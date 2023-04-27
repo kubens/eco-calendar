@@ -1,6 +1,6 @@
 import { CalendarProperty, ExtractPropertyValue, PropertyParameters, PropertyValue } from './CalendarProperty'
 
-export type CalendarElement = 'VCALENDAR' | 'VEVENT'
+export type CalendarElement = 'VCALENDAR' | 'VEVENT' | 'VALARM'
 
 export type ObjectSchema<
   Properties extends Record<string, PropertyValue>,
@@ -8,14 +8,14 @@ export type ObjectSchema<
 > = {
   [P in Name]: {
     required: boolean | ((names: Name[]) => boolean)
-    excludedBy?: Name[] | (() => string[] | undefined)
+    excludedBy?: Name[] | (() => boolean)
     once?: boolean
   }
 }
 
 export abstract class CalendarObject<
   Properties extends Record<string, PropertyValue>,
-  Child extends CalendarObject<Record<any, PropertyValue>> = never,
+  Child extends CalendarObject<Record<any, PropertyValue>, any> = never,
   PropertyName extends keyof Properties & string = keyof Properties & string,
   Value extends PropertyValue = ExtractPropertyValue<Properties, PropertyName>,
   Schema extends ObjectSchema<Properties> = ObjectSchema<Properties>
@@ -95,12 +95,10 @@ export abstract class CalendarObject<
       const rules = this.schema[name]
 
       // Check is current property is not excluded by another property.
-      if (rules.excludedBy) {
-        const excludedBy =
-          typeof rules.excludedBy === 'function'
-            ? rules.excludedBy()
-            : rules.excludedBy.find((excludingName) => excludingName in this.properties)
-
+      if (typeof rules.excludedBy === 'function' && name in this.properties && rules.excludedBy()) {
+        throw new Error(`${name} property should not occur of ${this.element}`)
+      } else if (Array.isArray(rules.excludedBy)) {
+        const excludedBy = rules.excludedBy.find((excluding) => excluding in this.properties)
         if (excludedBy) throw new Error(`${name} property should not occur with ${excludedBy}`)
       }
 

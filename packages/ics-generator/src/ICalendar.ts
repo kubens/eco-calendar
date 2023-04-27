@@ -34,4 +34,11 @@ export class ICalendar extends CalendarObject<ICalendarProperties, VEvent> {
     this.setProperty('REFRESH-INTERVAL', duration, { VALUE: 'DURATION' })
     this.setProperty('X-PUBLISHED-TTL', duration)
   }
+
+  event(): VEvent {
+    const event = new VEvent(this)
+    this.addChild(event)
+
+    return event
+  }
 }

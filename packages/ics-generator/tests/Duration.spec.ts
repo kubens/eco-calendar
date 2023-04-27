@@ -27,10 +27,20 @@ describe('Duration model', () => {
     expect(given.toString()).toBe('P1Y2M3DT4H5M6S')
   })
 
+  it('should return -P1Y2M3DT4H5M6S string for all attributes and isNegative', () => {
+    const given = new Duration({ isNegative: true, years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6 })
+    expect(given.toString()).toBe('-P1Y2M3DT4H5M6S')
+  })
+
   describe('when initialing from static seconds', () => {
     it('should return PT1M string for 60 seconds', () => {
       const given = Duration.seconds(60)
       expect(given.toString()).toBe('PT1M')
+    })
+
+    it('should return -PT1M string for -60 seconds', () => {
+      const given = Duration.seconds(-60)
+      expect(given.toString()).toBe('-PT1M')
     })
 
     it('should return P1Y8M30DT3H30M50S string for 55_224_666 seconds', () => {

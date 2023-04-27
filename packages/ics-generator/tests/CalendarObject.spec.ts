@@ -46,16 +46,15 @@ describe('CalendarObject', () => {
   })
 
   it('should throw an error when an excluded is an func and property is excluded by another property', () => {
-    const excludedBy = () => ['FIRST']
     const object = new TestObject('VCALENDAR', {
       FIRST: { required: true },
-      SECOND: { required: true, excludedBy },
+      SECOND: { required: true, excludedBy: () => true },
     })
 
     object.addProperty('FIRST', '__FIRST_VALUE__')
     object.addProperty('SECOND', '__SECOND_VALUE__')
 
-    expect(() => object.validate()).toThrowError('SECOND property should not occur with FIRST')
+    expect(() => object.validate()).toThrowError('SECOND property should not occur')
   })
 
   it('should throw an error when a required property is missing', () => {

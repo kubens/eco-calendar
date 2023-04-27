@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { VEvent } from '../src/VEvent'
 import { ICalendar } from '../src/ICalendar'
 
-describe('Event Object', () => {
+describe('VEvent Object', () => {
   it('should create an valid empty Event object', () => {
     const given = new VEvent(new ICalendar())
 
